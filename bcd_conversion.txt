@@ -1,0 +1,28 @@
+architecture behavior of bcd_converter is
+signal bin			:	std_logic_vector(7 downto 0);
+signal bcd			:	std_logic_vector(15 downto 0);
+begin
+-- Convert from the binary representation to binary coded decimal (BCD)
+bin_bcd	:	process(bin)
+variable	x	:	std_logic_vector(17 downto 0);
+begin
+	for i in 0 to 17 loop --initiallizes 18 bits of x to '0'
+		x(i) := '0';
+	end loop;
+
+	x(10 downto 3) := bin;
+	--next, we check the MSB for being greater than 4
+	for i in 0 to 4 loop
+		if x(11 downto 8) > "0100" then
+			--add 3 if it is greater than 4
+			x(11 downto 8) := x(11 downto 8) + "0011";
+		end if;
+		if x(15 downto 12) > "0100" then
+			x(15 downto 12) := x(15 downto 12) + "0011";
+		end if;
+		x(17 downto 1) := x(16 downto 0);
+	end loop;
+	bcd(15 downto 10) <= "000000";
+	bcd(9 downto 0) <= x(17 downto 8);
+end process bin_bcd; 
+end behavior;
